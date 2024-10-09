@@ -1,5 +1,7 @@
 package com.gatorme.text
 
+import com.gatorme.TEST_PARAMS
+import com.gatorme.TEST_STRING
 import com.gatorme.enum.ColorOption
 import com.gatorme.enum.TextOption
 import com.gatorme.exception.InvalidTextOptionException
@@ -12,51 +14,18 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PersistentTerminalTextFormatKtTest {
-    companion object {
-        const val TEST_STRING = "test"
-    }
-
     private lateinit var baos: ByteArrayOutputStream
     private lateinit var printStream: PrintStream
-
-    private fun provideTestParams(): List<Arguments> {
-        val noColor = mapOf<ColorOption, Color>()
-        val noText = listOf<TextOption>()
-        val shortColorMap = mapOf(ColorOption.TEXT to Color.RED)
-        val shortTextList = listOf(TextOption.ITALIC)
-        val allColorOpts = mapOf(ColorOption.TEXT to Color.ORANGE, ColorOption.BACKGROUND to Color.MAGENTA)
-        val longTextList = listOf(TextOption.ITALIC, TextOption.BOLD, TextOption.STRIKETHROUGH)
-        val allTextOpts = listOf(
-            TextOption.ITALIC,
-            TextOption.BOLD,
-            TextOption.REVERSE_VIDEO,
-            TextOption.UNDERLINE,
-            TextOption.STRIKETHROUGH
-        )
-
-        // don't use combo of noColor/noText here, that's a special case and tested elsewhere
-        return listOf(
-            Arguments.of(noColor, shortTextList),
-            Arguments.of(noColor, longTextList),
-            Arguments.of(noColor, allTextOpts),
-            Arguments.of(shortColorMap, noText),
-            Arguments.of(shortColorMap, shortTextList),
-            Arguments.of(shortColorMap, longTextList),
-            Arguments.of(shortColorMap, allTextOpts),
-            Arguments.of(allColorOpts, noText),
-            Arguments.of(allColorOpts, shortTextList),
-            Arguments.of(allColorOpts, longTextList),
-            Arguments.of(allColorOpts, allTextOpts)
-        )
-    }
 
     @BeforeEach
     fun setup() {
@@ -73,7 +42,7 @@ class PersistentTerminalTextFormatKtTest {
 
 
     @ParameterizedTest
-    @MethodSource("provideTestParams")
+    @MethodSource(TEST_PARAMS)
     fun WHEN_print_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: List<TextOption>) {
         // Arrange
         val config = TextFormatConfig(
@@ -94,7 +63,7 @@ class PersistentTerminalTextFormatKtTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideTestParams")
+    @MethodSource(TEST_PARAMS)
     fun WHEN_println_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: List<TextOption>) {
         // Arrange
         val config = TextFormatConfig(
@@ -127,5 +96,65 @@ class PersistentTerminalTextFormatKtTest {
         org.junit.jupiter.api.assertThrows<InvalidTextOptionException> {
             PersistentTerminalTextFormat(config)
         }
+    }
+
+    @ParameterizedTest
+    @EnumSource(ColorOption::class)
+    fun WHEN_reset_color_EXPECT_removed_from_config_and_correct_output_length(colorOption: ColorOption) {
+        // Arrange
+        val colorOptions = mapOf(
+            colorOption to Color.BLUE,
+            ColorOption.TEXT to Color.BLACK,
+            ColorOption.BACKGROUND to Color.BLACK
+        )
+
+        val textOptions = listOf(TextOption.BOLD, TextOption.UNDERLINE)
+        val config = TextFormatConfig(
+            colorOptions = colorOptions,
+            textOptions = textOptions,
+            printStream = printStream
+        )
+
+        val tx = PersistentTerminalTextFormat(config)
+
+        // Act + Assert
+        tx.println(TEST_STRING)
+        val startingSize = getExpectedStringLength(tx.config.colorOptions, tx.config.textOptions, newLine = true)
+        Assertions.assertEquals(startingSize, baos.size())
+
+        tx.reset(colorOption)
+        tx.println(TEST_STRING)
+        val finalSize = startingSize + getExpectedStringLength(tx.config.colorOptions, tx.config.textOptions, newLine = true)
+        assertEquals(finalSize, baos.size())
+    }
+
+    @ParameterizedTest
+    @EnumSource(TextOption::class)
+    fun WHEN_reset_text_option_EXPECT_removed_from_config_and_correct_output_length(textOption: TextOption) {
+        // Arrange
+        val colorOptions = mapOf(
+            ColorOption.TEXT to Color.BLACK,
+            ColorOption.BACKGROUND to Color.BLACK
+        )
+
+        val textOptions = listOf(textOption, TextOption.BOLD, TextOption.UNDERLINE)
+
+        val config = TextFormatConfig(
+            colorOptions = colorOptions,
+            textOptions = textOptions,
+            printStream = printStream
+        )
+
+        val tx = PersistentTerminalTextFormat(config)
+
+        // Act + Assert
+        tx.println(TEST_STRING)
+        val startingSize = getExpectedStringLength(tx.config.colorOptions, tx.config.textOptions, newLine = true)
+        Assertions.assertEquals(startingSize, baos.size())
+
+        tx.reset(textOption = textOption)
+        tx.println(TEST_STRING)
+        val finalSize = startingSize + getExpectedStringLength(tx.config.colorOptions, tx.config.textOptions, newLine = true)
+        assertEquals(finalSize, baos.size())
     }
 }

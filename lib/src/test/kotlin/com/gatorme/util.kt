@@ -1,10 +1,48 @@
 package com.gatorme
 
-import com.gatorme.text.PersistentTerminalTextFormatKtTest.Companion.TEST_STRING
 import com.gatorme.enum.ColorOption
 import com.gatorme.enum.TextOption
 import com.gatorme.text.TextFormat
+import org.junit.jupiter.params.provider.Arguments
 import java.awt.Color
+
+const val TEST_STRING = "test"
+const val TEST_PARAMS = "com.gatorme.UtilKt#provideTestParams"
+
+fun provideTestParams(): List<Arguments> {
+    val noColor = mapOf<ColorOption, Color>()
+    val noText = listOf<TextOption>()
+    val shortColorMap = mapOf(ColorOption.TEXT to Color.RED)
+    val shortTextList = listOf(TextOption.ITALIC)
+    val allColorOpts = mapOf(ColorOption.TEXT to Color.ORANGE, ColorOption.BACKGROUND to Color.MAGENTA)
+    val longTextList = listOf(TextOption.ITALIC, TextOption.BOLD, TextOption.STRIKETHROUGH)
+    val allTextOpts = listOf(
+        TextOption.ITALIC,
+        TextOption.BOLD,
+        TextOption.REVERSE_COLORS,
+        TextOption.UNDERLINE,
+        TextOption.STRIKETHROUGH,
+        TextOption.BOLD_UNDERLINE,
+        TextOption.BLINK,
+        TextOption.FAINT,
+        TextOption.HIDDEN
+    )
+
+    // don't use combo of noColor/noText here, that's a special case and tested elsewhere
+    return listOf(
+        Arguments.of(noColor, shortTextList),
+        Arguments.of(noColor, longTextList),
+        Arguments.of(noColor, allTextOpts),
+        Arguments.of(shortColorMap, noText),
+        Arguments.of(shortColorMap, shortTextList),
+        Arguments.of(shortColorMap, longTextList),
+        Arguments.of(shortColorMap, allTextOpts),
+        Arguments.of(allColorOpts, noText),
+        Arguments.of(allColorOpts, shortTextList),
+        Arguments.of(allColorOpts, longTextList),
+        Arguments.of(allColorOpts, allTextOpts)
+    )
+}
 
 private fun intsLength(vararg integers: Int): Int = integers.map { it.toString().length }.reduceOrNull(Integer::sum) ?: 0
 

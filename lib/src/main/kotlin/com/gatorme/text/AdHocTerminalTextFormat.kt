@@ -10,6 +10,17 @@ import java.io.PrintStream
 sealed class AdHocTerminalTextFormat {
     companion object {
         @JvmStatic
+        fun print(text: String, config: TextFormatConfig) {
+            val ansiEscape = TextFormat(config).getAnsiEscapeSequence()
+            config.printStream.print("$ansiEscape$text$ANSI_RESET")
+        }
+
+        @JvmStatic
+        fun println(text: String, config: TextFormatConfig) {
+            print("$text\n", config)
+        }
+
+        @JvmStatic
         fun print(text: String,
                   textColor: Color? = null,
                   backgroundColor: Color? = null,
@@ -33,18 +44,6 @@ sealed class AdHocTerminalTextFormat {
                     textOptions: List<TextOption> = listOf(),
                     printStream: PrintStream = System.out) {
             print("$text\n", textColor, backgroundColor, textOptions, printStream)
-        }
-
-        @JvmStatic
-        fun print(text: String, config: TextFormatConfig) {
-            val ansiEscape = TextFormat(config).getAnsiEscapeSequence()
-            config.printStream.print("$ansiEscape$text$ANSI_RESET")
-        }
-
-        @JvmStatic
-        fun println(text: String, config: TextFormatConfig) {
-            val ansiEscape = TextFormat(config).getAnsiEscapeSequence()
-            config.printStream.print("$ansiEscape$text\n$ANSI_RESET")
         }
     }
 }

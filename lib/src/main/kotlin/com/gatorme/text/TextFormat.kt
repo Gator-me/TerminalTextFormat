@@ -1,5 +1,7 @@
 package com.gatorme.text
 
+import com.gatorme.enum.ColorOption
+import com.gatorme.enum.TextOption
 import com.gatorme.model.TextFormatConfig
 
 open class TextFormat(private val config: TextFormatConfig = TextFormatConfig()) {
@@ -22,5 +24,27 @@ open class TextFormat(private val config: TextFormatConfig = TextFormatConfig())
         format.append(M)
 
         return format.toString()
+    }
+
+    /**
+     * Resets enabled options for color and text.
+     */
+    open fun reset(colorOption: ColorOption? = null,
+                   textOption: TextOption? = null,
+                   all: Boolean = false) {
+        if (colorOption != null) {
+            this.config.colorOptions -= colorOption
+            print("$ESC${colorOption.reset}$M")
+        }
+        if (textOption != null) {
+            this.config.textOptions -= textOption
+            print("$ESC${textOption.reset}$M")
+        }
+        // keep printing to the same stream
+        if (all) {
+            this.config.colorOptions = mapOf()
+            this.config.textOptions = listOf()
+            print(ANSI_RESET)
+        }
     }
 }
