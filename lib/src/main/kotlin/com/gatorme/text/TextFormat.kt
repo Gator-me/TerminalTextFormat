@@ -2,7 +2,7 @@ package com.gatorme.text
 
 import com.gatorme.model.TextFormatConfig
 
-open class TextFormat(private val config: TextFormatConfig) {
+open class TextFormat(private val config: TextFormatConfig = TextFormatConfig()) {
     companion object AnsiArgs {
         const val ANSI_RESET = "\u001b[0m"
         const val ESC = "\u001b["
