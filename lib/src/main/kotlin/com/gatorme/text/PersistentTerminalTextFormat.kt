@@ -1,7 +1,9 @@
 package com.gatorme.text
 
+import com.gatorme.enum.ColorOption
 import com.gatorme.exception.InvalidTextOptionException
 import com.gatorme.model.TextFormatConfig
+import java.awt.Color
 
 class PersistentTerminalTextFormat (private val config: TextFormatConfig): TextFormat(config) {
     init {
@@ -12,12 +14,11 @@ class PersistentTerminalTextFormat (private val config: TextFormatConfig): TextF
 
     private val ansiEscapeSequence = getAnsiEscapeSequence()
 
-    fun print(text: Any = "", colorBackgroundLineFull: Boolean = this.config.colorBackgroundLineFull) {
-        this.config.printStream.print("$ansiEscapeSequence${text}${if (colorBackgroundLineFull) "" else ANSI_RESET}")
-        if (colorBackgroundLineFull) this.config.printStream.print(ANSI_RESET)
+    fun print(text: Any = "") {
+        this.config.printStream.print("$ansiEscapeSequence$text$ANSI_RESET")
     }
 
-    fun println(text: Any = "", colorBackgroundLineFull: Boolean = this.config.colorBackgroundLineFull) {
-        print("$text\n", colorBackgroundLineFull)
+    fun println(text: Any = "") {
+        print("$text\n")
     }
 }
