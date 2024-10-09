@@ -7,6 +7,6 @@ import java.io.PrintStream
 
 data class TextFormatConfig(
     var colorOptions: Map<ColorOption, Color> = mapOf(),
-    var textOptions: List<TextOption> = listOf(),
+    var textOptions: Set<TextOption> = setOf(),
     val printStream: PrintStream = System.out,
 )

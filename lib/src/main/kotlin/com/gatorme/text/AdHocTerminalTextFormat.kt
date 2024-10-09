@@ -24,7 +24,7 @@ sealed class AdHocTerminalTextFormat {
         fun print(text: String,
                   textColor: Color? = null,
                   backgroundColor: Color? = null,
-                  textOptions: List<TextOption> = listOf(),
+                  textOptions: Set<TextOption> = setOf(),
                   printStream: PrintStream = System.out) {
             val colorOptions = mutableMapOf<ColorOption, Color>()
             if (textColor != null) colorOptions[ColorOption.TEXT] = textColor
@@ -41,7 +41,7 @@ sealed class AdHocTerminalTextFormat {
         fun println(text: String,
                     textColor: Color? = null,
                     backgroundColor: Color? = null,
-                    textOptions: List<TextOption> = listOf(),
+                    textOptions: Set<TextOption> = setOf(),
                     printStream: PrintStream = System.out) {
             print("$text\n", textColor, backgroundColor, textOptions, printStream)
         }

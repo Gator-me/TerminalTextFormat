@@ -43,7 +43,7 @@ open class TextFormat(private val config: TextFormatConfig = TextFormatConfig())
         // keep printing to the same stream
         if (all) {
             this.config.colorOptions = mapOf()
-            this.config.textOptions = listOf()
+            this.config.textOptions = setOf()
             print(ANSI_RESET)
         }
     }

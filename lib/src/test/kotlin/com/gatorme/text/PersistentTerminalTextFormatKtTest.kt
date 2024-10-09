@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.EnumSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.awt.Color
@@ -43,7 +42,7 @@ class PersistentTerminalTextFormatKtTest {
 
     @ParameterizedTest
     @MethodSource(TEST_PARAMS)
-    fun WHEN_print_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: List<TextOption>) {
+    fun WHEN_print_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: Set<TextOption>) {
         // Arrange
         val config = TextFormatConfig(
             colorOptions = colorOptions,
@@ -64,7 +63,7 @@ class PersistentTerminalTextFormatKtTest {
 
     @ParameterizedTest
     @MethodSource(TEST_PARAMS)
-    fun WHEN_println_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: List<TextOption>) {
+    fun WHEN_println_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: Set<TextOption>) {
         // Arrange
         val config = TextFormatConfig(
             colorOptions = colorOptions,
@@ -88,7 +87,7 @@ class PersistentTerminalTextFormatKtTest {
     fun WHEN_no_color_or_text_options_EXPECT_throw_exception() {
         // Arrange
         val emptyColorOptions: Map<ColorOption, Color> = mapOf()
-        val emptyTextOptions: List<TextOption> = listOf()
+        val emptyTextOptions: Set<TextOption> = setOf()
 
         val config = TextFormatConfig(colorOptions = emptyColorOptions, textOptions = emptyTextOptions)
 
@@ -108,7 +107,7 @@ class PersistentTerminalTextFormatKtTest {
             ColorOption.BACKGROUND to Color.BLACK
         )
 
-        val textOptions = listOf(TextOption.BOLD, TextOption.UNDERLINE)
+        val textOptions = setOf(TextOption.BOLD, TextOption.UNDERLINE)
         val config = TextFormatConfig(
             colorOptions = colorOptions,
             textOptions = textOptions,
@@ -137,7 +136,7 @@ class PersistentTerminalTextFormatKtTest {
             ColorOption.BACKGROUND to Color.BLACK
         )
 
-        val textOptions = listOf(textOption, TextOption.BOLD, TextOption.UNDERLINE)
+        val textOptions = setOf(textOption, TextOption.BOLD, TextOption.UNDERLINE)
 
         val config = TextFormatConfig(
             colorOptions = colorOptions,

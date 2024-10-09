@@ -11,12 +11,12 @@ const val TEST_PARAMS = "com.gatorme.UtilKt#provideTestParams"
 
 fun provideTestParams(): List<Arguments> {
     val noColor = mapOf<ColorOption, Color>()
-    val noText = listOf<TextOption>()
+    val noText = setOf<TextOption>()
     val shortColorMap = mapOf(ColorOption.TEXT to Color.RED)
-    val shortTextList = listOf(TextOption.ITALIC)
+    val shortTextSet = setOf(TextOption.ITALIC)
     val allColorOpts = mapOf(ColorOption.TEXT to Color.ORANGE, ColorOption.BACKGROUND to Color.MAGENTA)
-    val longTextList = listOf(TextOption.ITALIC, TextOption.BOLD, TextOption.STRIKETHROUGH)
-    val allTextOpts = listOf(
+    val longTextSet = setOf(TextOption.ITALIC, TextOption.BOLD, TextOption.STRIKETHROUGH)
+    val allTextOpts = setOf(
         TextOption.ITALIC,
         TextOption.BOLD,
         TextOption.REVERSE_COLORS,
@@ -30,16 +30,16 @@ fun provideTestParams(): List<Arguments> {
 
     // don't use combo of noColor/noText here, that's a special case and tested elsewhere
     return listOf(
-        Arguments.of(noColor, shortTextList),
-        Arguments.of(noColor, longTextList),
+        Arguments.of(noColor, shortTextSet),
+        Arguments.of(noColor, longTextSet),
         Arguments.of(noColor, allTextOpts),
         Arguments.of(shortColorMap, noText),
-        Arguments.of(shortColorMap, shortTextList),
-        Arguments.of(shortColorMap, longTextList),
+        Arguments.of(shortColorMap, shortTextSet),
+        Arguments.of(shortColorMap, longTextSet),
         Arguments.of(shortColorMap, allTextOpts),
         Arguments.of(allColorOpts, noText),
-        Arguments.of(allColorOpts, shortTextList),
-        Arguments.of(allColorOpts, longTextList),
+        Arguments.of(allColorOpts, shortTextSet),
+        Arguments.of(allColorOpts, longTextSet),
         Arguments.of(allColorOpts, allTextOpts)
     )
 }
@@ -47,7 +47,7 @@ fun provideTestParams(): List<Arguments> {
 private fun intsLength(vararg integers: Int): Int = integers.map { it.toString().length }.reduceOrNull(Integer::sum) ?: 0
 
 fun getExpectedStringLength(colorOptions: Map<ColorOption, Color>,
-                                    textOptions: List<TextOption>,
+                                    textOptions: Set<TextOption>,
                                     newLine: Boolean): Int {
     return TextFormat.ESC.length +
             (colorOptions.keys.map { intsLength(it.code) }.reduceOrNull(Integer::sum) ?: 0) +

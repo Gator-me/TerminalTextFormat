@@ -37,7 +37,7 @@ class AdHocTerminalTextFormatKtTest {
 
     @ParameterizedTest
     @MethodSource(TEST_PARAMS)
-    fun WHEN_print_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: List<TextOption>) {
+    fun WHEN_print_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: Set<TextOption>) {
         // Arrange
         val textColor = colorOptions[ColorOption.TEXT]
         val backgroundColor = colorOptions[ColorOption.BACKGROUND]
@@ -54,7 +54,7 @@ class AdHocTerminalTextFormatKtTest {
 
     @ParameterizedTest
     @MethodSource(TEST_PARAMS)
-    fun WHEN_println_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: List<TextOption>) {
+    fun WHEN_println_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: Set<TextOption>) {
         // Arrange
         val textColor = colorOptions[ColorOption.TEXT]
         val backgroundColor = colorOptions[ColorOption.BACKGROUND]
