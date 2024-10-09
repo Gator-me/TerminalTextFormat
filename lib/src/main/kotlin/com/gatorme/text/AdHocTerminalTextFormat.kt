@@ -2,30 +2,51 @@ package com.gatorme.text
 
 import com.gatorme.enum.ColorOption
 import com.gatorme.enum.TextOption
+import com.gatorme.model.TextFormatConfig
+import com.gatorme.text.TextFormat.AnsiArgs.ANSI_RESET
 import java.awt.Color
 import java.io.PrintStream
 
-sealed class AdHocTerminalTextFormat: TextFormat() {
+sealed class AdHocTerminalTextFormat {
     companion object {
         @JvmStatic
-        fun print(text: String, textColor: Color? = null,
-                           backgroundColor: Color? = null,
-                           textOptions: List<TextOption> = listOf(),
-                            printStream: PrintStream = System.out) {
+        fun print(text: String,
+                  textColor: Color? = null,
+                  backgroundColor: Color? = null,
+                  textOptions: List<TextOption> = listOf(),
+                  colorBackgroundLineFull: Boolean = false,
+                  printStream: PrintStream = System.out) {
             val colorOptions = mutableMapOf<ColorOption, Color>()
             if (textColor != null) colorOptions[ColorOption.TEXT] = textColor
             if (backgroundColor != null) colorOptions[ColorOption.BACKGROUND] = backgroundColor
-
-            val ansiEscape = TextFormat().getAnsiEscapeSequence(colorOptions = colorOptions, textOptions = textOptions)
-            printStream.print("$ansiEscape$text$ANSI_RESET")
+            val config = TextFormatConfig(
+                colorOptions = colorOptions,
+                textOptions = textOptions,
+                colorBackgroundLineFull = colorBackgroundLineFull,
+                printStream = printStream
+            )
+            print(text, config)
         }
 
         @JvmStatic
         fun println(text: String, textColor: Color? = null,
                     backgroundColor: Color? = null,
                     textOptions: List<TextOption> = listOf(),
+                    colorBackgroundLineFull: Boolean = false,
                     printStream: PrintStream = System.out) {
-            print("$text\n", textColor, backgroundColor, textOptions, printStream)
+            print("$text\n", textColor, backgroundColor, textOptions, colorBackgroundLineFull, printStream)
+        }
+
+        @JvmStatic
+        fun print(text: String, config: TextFormatConfig) {
+            val ansiEscape = TextFormat(config).getAnsiEscapeSequence()
+            config.printStream.print("$ansiEscape$text$ANSI_RESET")
+        }
+
+        @JvmStatic
+        fun println(text: String, config: TextFormatConfig) {
+            val ansiEscape = TextFormat(config).getAnsiEscapeSequence()
+            config.printStream.print("$ansiEscape$text\n$ANSI_RESET")
         }
     }
 }

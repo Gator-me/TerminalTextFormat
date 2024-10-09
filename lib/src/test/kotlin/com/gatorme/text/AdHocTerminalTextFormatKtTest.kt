@@ -76,7 +76,7 @@ class AdHocTerminalTextFormatKtTest {
         val backgroundColor = colorOptions[ColorOption.BACKGROUND]
 
         // Act
-        AdHocTerminalTextFormat.print(TEST_STRING, textColor, backgroundColor, textOptions, printStream)
+        AdHocTerminalTextFormat.print(TEST_STRING, textColor, backgroundColor, textOptions, printStream =  printStream)
 
         // Assert
         Assertions.assertEquals(
@@ -93,7 +93,7 @@ class AdHocTerminalTextFormatKtTest {
         val backgroundColor = colorOptions[ColorOption.BACKGROUND]
 
         // Act
-        AdHocTerminalTextFormat.println(TEST_STRING, textColor, backgroundColor, textOptions, printStream)
+        AdHocTerminalTextFormat.println(TEST_STRING, textColor, backgroundColor, textOptions, printStream = printStream)
 
         // Assert
         Assertions.assertEquals(

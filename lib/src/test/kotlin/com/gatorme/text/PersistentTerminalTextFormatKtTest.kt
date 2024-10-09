@@ -4,6 +4,7 @@ import com.gatorme.enum.ColorOption
 import com.gatorme.enum.TextOption
 import com.gatorme.exception.InvalidTextOptionException
 import com.gatorme.getExpectedStringLength
+import com.gatorme.model.TextFormatConfig
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -75,7 +76,12 @@ class PersistentTerminalTextFormatKtTest {
     @MethodSource("provideTestParams")
     fun WHEN_print_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: List<TextOption>) {
         // Arrange
-        val tx = PersistentTerminalTextFormat(colorOptions = colorOptions, textOptions = textOptions, printStream = printStream)
+        val config = TextFormatConfig(
+            colorOptions = colorOptions,
+            textOptions = textOptions,
+            printStream = printStream
+        )
+        val tx = PersistentTerminalTextFormat(config)
 
         // Act
         tx.print(TEST_STRING)
@@ -91,7 +97,12 @@ class PersistentTerminalTextFormatKtTest {
     @MethodSource("provideTestParams")
     fun WHEN_println_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: List<TextOption>) {
         // Arrange
-        val tx = PersistentTerminalTextFormat(colorOptions = colorOptions, textOptions = textOptions, printStream = printStream)
+        val config = TextFormatConfig(
+            colorOptions = colorOptions,
+            textOptions = textOptions,
+            printStream = printStream
+        )
+        val tx = PersistentTerminalTextFormat(config)
 
         // Act
         tx.println(TEST_STRING)
@@ -104,32 +115,17 @@ class PersistentTerminalTextFormatKtTest {
     }
 
     @Test
-    @DisplayName("Create with no parameters passed")
-    fun WHEN_no_parameters_passed_EXPECT_succeed_init() {
-        // Act
-        var tx: PersistentTerminalTextFormat? = null
-        Assertions.assertDoesNotThrow {
-            tx = PersistentTerminalTextFormat()
-            tx?.println("testing 1..2...3")
-        }
-
-        // Assert
-        Assertions.assertNotNull(tx)
-    }
-
-    @Test
     @DisplayName("Fail creating with no color or text options")
     fun WHEN_no_color_or_text_options_EXPECT_throw_exception() {
         // Arrange
         val emptyColorOptions: Map<ColorOption, Color> = mapOf()
         val emptyTextOptions: List<TextOption> = listOf()
 
+        val config = TextFormatConfig(colorOptions = emptyColorOptions, textOptions = emptyTextOptions)
+
         // Act
         org.junit.jupiter.api.assertThrows<InvalidTextOptionException> {
-            PersistentTerminalTextFormat(
-                colorOptions = emptyColorOptions,
-                textOptions = emptyTextOptions
-            )
+            PersistentTerminalTextFormat(config)
         }
     }
 }
