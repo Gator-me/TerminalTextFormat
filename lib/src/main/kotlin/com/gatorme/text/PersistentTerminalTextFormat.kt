@@ -1,11 +1,9 @@
 package com.gatorme.text
 
-import com.gatorme.enum.ColorOption
 import com.gatorme.exception.InvalidTextOptionException
 import com.gatorme.model.TextFormatConfig
-import java.awt.Color
 
-class PersistentTerminalTextFormat (private val config: TextFormatConfig): TextFormat(config) {
+class PersistentTerminalTextFormat(private val config: TextFormatConfig): TextFormat(config) {
     init {
         if (this.config.colorOptions.isEmpty() && this.config.textOptions.isEmpty()) {
             throw InvalidTextOptionException("TerminalText cannot be constructed with no color or text options.")
@@ -19,6 +17,6 @@ class PersistentTerminalTextFormat (private val config: TextFormatConfig): TextF
     }
 
     fun println(text: Any = "") {
-        print("$text\n")
+        this.print("$text\n")
     }
 }

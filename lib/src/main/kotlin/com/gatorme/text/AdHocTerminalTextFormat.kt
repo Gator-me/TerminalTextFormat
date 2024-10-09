@@ -27,7 +27,8 @@ sealed class AdHocTerminalTextFormat {
         }
 
         @JvmStatic
-        fun println(text: String, textColor: Color? = null,
+        fun println(text: String,
+                    textColor: Color? = null,
                     backgroundColor: Color? = null,
                     textOptions: List<TextOption> = listOf(),
                     printStream: PrintStream = System.out) {
