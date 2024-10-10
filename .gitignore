@@ -7,3 +7,6 @@ build
 gradlew
 gradlew.bat
 .idea
+
+# Put a main method here for testing the actual outputs
+Main.kt
