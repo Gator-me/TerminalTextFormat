@@ -16,9 +16,10 @@ open class TextFormat(private val config: TextFormatConfig = TextFormatConfig())
     fun getAnsiEscapeSequence(): String {
         val format = StringBuilder(ESC)
 
-        val options = this.config.colorOptions.flatMap {
-            listOf(it.key.code, RGB_ARG, it.value.red, it.value.green, it.value.blue)
-        } + this.config.textOptions.map { it.code }
+        val options =
+            this.config.colorOptions.flatMap {
+                listOf(it.key.code, RGB_ARG, it.value.red, it.value.green, it.value.blue)
+            } + this.config.textOptions.map { it.code }
 
         format.append(options.joinToString(separator = SEP))
         format.append(M)
@@ -29,9 +30,11 @@ open class TextFormat(private val config: TextFormatConfig = TextFormatConfig())
     /**
      * Resets enabled options for color and text.
      */
-    open fun reset(colorOption: ColorOption? = null,
-                   textOption: TextOption? = null,
-                   all: Boolean = false) {
+    open fun reset(
+        colorOption: ColorOption? = null,
+        textOption: TextOption? = null,
+        all: Boolean = false,
+    ) {
         if (colorOption != null) {
             this.config.colorOptions -= colorOption
             print("$ESC${colorOption.reset}$M")

@@ -32,23 +32,25 @@ class PersistentTerminalTextFormatKtTest {
         printStream = PrintStream(baos)
     }
 
-
     @AfterEach
     fun teardown() {
         baos.flush()
         printStream.close()
     }
 
-
     @ParameterizedTest
     @MethodSource(TEST_PARAMS)
-    fun WHEN_print_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: Set<TextOption>) {
+    fun print_multiple_options_correct_length_output(
+        colorOptions: Map<ColorOption, Color>,
+        textOptions: Set<TextOption>,
+    ) {
         // Arrange
-        val config = TextFormatConfig(
-            colorOptions = colorOptions,
-            textOptions = textOptions,
-            printStream = printStream
-        )
+        val config =
+            TextFormatConfig(
+                colorOptions = colorOptions,
+                textOptions = textOptions,
+                printStream = printStream,
+            )
         val tx = PersistentTerminalTextFormat(config)
 
         // Act
@@ -57,19 +59,23 @@ class PersistentTerminalTextFormatKtTest {
         // Assert
         Assertions.assertEquals(
             getExpectedStringLength(colorOptions, textOptions, newLine = false),
-            baos.size()
+            baos.size(),
         )
     }
 
     @ParameterizedTest
     @MethodSource(TEST_PARAMS)
-    fun WHEN_println_EXPECT_correct_length_output(colorOptions: Map<ColorOption, Color>, textOptions: Set<TextOption>) {
+    fun println_multiple_options_correct_length_output(
+        colorOptions: Map<ColorOption, Color>,
+        textOptions: Set<TextOption>,
+    ) {
         // Arrange
-        val config = TextFormatConfig(
-            colorOptions = colorOptions,
-            textOptions = textOptions,
-            printStream = printStream
-        )
+        val config =
+            TextFormatConfig(
+                colorOptions = colorOptions,
+                textOptions = textOptions,
+                printStream = printStream,
+            )
         val tx = PersistentTerminalTextFormat(config)
 
         // Act
@@ -78,13 +84,13 @@ class PersistentTerminalTextFormatKtTest {
         // Assert
         Assertions.assertEquals(
             getExpectedStringLength(colorOptions, textOptions, newLine = true),
-            baos.size()
+            baos.size(),
         )
     }
 
     @Test
     @DisplayName("Fail creating with no color or text options")
-    fun WHEN_no_color_or_text_options_EXPECT_throw_exception() {
+    fun init_no_color_or_text_options_throws_exception() {
         // Arrange
         val emptyColorOptions: Map<ColorOption, Color> = mapOf()
         val emptyTextOptions: Set<TextOption> = setOf()
@@ -99,20 +105,22 @@ class PersistentTerminalTextFormatKtTest {
 
     @ParameterizedTest
     @EnumSource(ColorOption::class)
-    fun WHEN_reset_color_EXPECT_removed_from_config_and_correct_output_length(colorOption: ColorOption) {
+    fun reset_color_removed_from_config_and_correct_output_length(colorOption: ColorOption) {
         // Arrange
-        val colorOptions = mapOf(
-            colorOption to Color.BLUE,
-            ColorOption.TEXT to Color.BLACK,
-            ColorOption.BACKGROUND to Color.BLACK
-        )
+        val colorOptions =
+            mapOf(
+                colorOption to Color.BLUE,
+                ColorOption.TEXT to Color.BLACK,
+                ColorOption.BACKGROUND to Color.BLACK,
+            )
 
         val textOptions = setOf(TextOption.BOLD, TextOption.UNDERLINE)
-        val config = TextFormatConfig(
-            colorOptions = colorOptions,
-            textOptions = textOptions,
-            printStream = printStream
-        )
+        val config =
+            TextFormatConfig(
+                colorOptions = colorOptions,
+                textOptions = textOptions,
+                printStream = printStream,
+            )
 
         val tx = PersistentTerminalTextFormat(config)
 
@@ -120,29 +128,39 @@ class PersistentTerminalTextFormatKtTest {
         tx.println(TEST_STRING)
         val startingSize = getExpectedStringLength(tx.config.colorOptions, tx.config.textOptions, newLine = true)
         Assertions.assertEquals(startingSize, baos.size())
+        assertEquals(2, tx.config.colorOptions.size)
 
         tx.reset(colorOption)
         tx.println(TEST_STRING)
-        val finalSize = startingSize + getExpectedStringLength(tx.config.colorOptions, tx.config.textOptions, newLine = true)
+        val finalSize =
+            startingSize +
+                getExpectedStringLength(
+                    tx.config.colorOptions,
+                    tx.config.textOptions,
+                    newLine = true,
+                )
         assertEquals(finalSize, baos.size())
+        assertEquals(1, tx.config.colorOptions.size)
     }
 
     @ParameterizedTest
-    @EnumSource(TextOption::class)
-    fun WHEN_reset_text_option_EXPECT_removed_from_config_and_correct_output_length(textOption: TextOption) {
+    @EnumSource(value = TextOption::class, mode = EnumSource.Mode.EXCLUDE, names = ["BOLD"])
+    fun reset_text_option_removed_from_config_and_correct_output_length(textOption: TextOption) {
         // Arrange
-        val colorOptions = mapOf(
-            ColorOption.TEXT to Color.BLACK,
-            ColorOption.BACKGROUND to Color.BLACK
-        )
+        val colorOptions =
+            mapOf(
+                ColorOption.TEXT to Color.BLACK,
+                ColorOption.BACKGROUND to Color.BLACK,
+            )
 
-        val textOptions = setOf(textOption, TextOption.BOLD, TextOption.UNDERLINE)
+        val textOptions = setOf(textOption, TextOption.BOLD)
 
-        val config = TextFormatConfig(
-            colorOptions = colorOptions,
-            textOptions = textOptions,
-            printStream = printStream
-        )
+        val config =
+            TextFormatConfig(
+                colorOptions = colorOptions,
+                textOptions = textOptions,
+                printStream = printStream,
+            )
 
         val tx = PersistentTerminalTextFormat(config)
 
@@ -150,10 +168,18 @@ class PersistentTerminalTextFormatKtTest {
         tx.println(TEST_STRING)
         val startingSize = getExpectedStringLength(tx.config.colorOptions, tx.config.textOptions, newLine = true)
         Assertions.assertEquals(startingSize, baos.size())
+        assertEquals(2, tx.config.textOptions.size)
 
         tx.reset(textOption = textOption)
         tx.println(TEST_STRING)
-        val finalSize = startingSize + getExpectedStringLength(tx.config.colorOptions, tx.config.textOptions, newLine = true)
+        val finalSize =
+            startingSize +
+                getExpectedStringLength(
+                    tx.config.colorOptions,
+                    tx.config.textOptions,
+                    newLine = true,
+                )
         assertEquals(finalSize, baos.size())
+        assertEquals(1, tx.config.textOptions.size)
     }
 }
